@@ -11,7 +11,7 @@ print("🚀 AVVIO SCRIPT MASTER 8 NICCHIE B2B - OPTIMA AI")
 print("==================================================")
 
 # -------------------------------------------------------------------
-# FUNZIONE DUAL-AI NATIVA CON ENDPOINT VERIFICATI AL 100%
+# FUNZIONE DUAL-AI NATIVA (GROQ & GEMINI FALLBACK)
 # -------------------------------------------------------------------
 def generate_dynamic_b2b_finetuning():
     gemini_key = os.getenv('GEMINI_API_KEY')
@@ -33,14 +33,38 @@ Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura:
   {{"instruction": "Domanda tecnica approfondita...", "input": "", "output": "Risposta tecnica esaustiva..."}}
 ]"""
 
-    # 1. Google Gemini Flash (Endpoint v1beta)
+    # 1. Tentativo con Groq API (Modello Standard Universale)
+    if groq_key:
+        try:
+            url_groq = "https://api.groq.com/openai/v1/chat/completions"
+            headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
+            for model_name in ["llama3-8b-8192", "mixtral-8x7b-32768", "gemma2-9b-it"]:
+                payload = {
+                    "model": model_name,
+                    "messages": [
+                        {"role": "system", "content": "You are a specialized technical data generator. You only output raw JSON arrays without any extra text."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.4
+                }
+                res = requests.post(url_groq, headers=headers, json=payload, timeout=12)
+                if res.status_code == 200:
+                    content = res.json()['choices'][0]['message']['content']
+                    match = re.search(r'\[.*\]', content, re.DOTALL)
+                    if match:
+                        data = json.loads(match.group(0))
+                        if isinstance(data, list) and len(data) > 0:
+                            print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq ({model_name}) sul tema: {selected_topic}")
+                            return data
+        except Exception as e:
+            print(f"   [IA Engine] ⚠️ Errore Groq: {e}. Provo Google...")
+
+    # 2. Tentativo con Google Gemini API
     if gemini_key:
         try:
             url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-            payload = {
-                "contents": [{"parts": [{"text": prompt}]}]
-            }
-            res = requests.post(url_gemini, json=payload, timeout=15)
+            payload = {"contents": [{"parts": [{"text": prompt}]}]}
+            res = requests.post(url_gemini, json=payload, timeout=12)
             if res.status_code == 200:
                 raw_text = res.json()['candidates'][0]['content']['parts'][0]['text']
                 match = re.search(r'\[.*\]', raw_text, re.DOTALL)
@@ -49,37 +73,8 @@ Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura:
                     if isinstance(data, list) and len(data) > 0:
                         print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Google Gemini sul tema: {selected_topic}")
                         return data
-            else:
-                print(f"   [IA Engine] ⚠️ Gemini HTTP {res.status_code}: {res.text[:150]}. Passo a Groq...")
         except Exception as e:
-            print(f"   [IA Engine] ⚠️ Errore Gemini ({e}). Passo a Groq...")
-
-    # 2. Groq (Modello Attivo Verificato: llama-3.3-70b-versatile)
-    if groq_key:
-        try:
-            url_groq = "https://api.groq.com/openai/v1/chat/completions"
-            headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
-            payload = {
-                "model": "llama-3.3-70b-versatile",
-                "messages": [
-                    {"role": "system", "content": "You are a specialized technical data generator. Output only raw JSON array."},
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.4
-            }
-            res = requests.post(url_groq, headers=headers, json=payload, timeout=15)
-            if res.status_code == 200:
-                content = res.json()['choices'][0]['message']['content']
-                match = re.search(r'\[.*\]', content, re.DOTALL)
-                if match:
-                    data = json.loads(match.group(0))
-                    if isinstance(data, list) and len(data) > 0:
-                        print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3.3 sul tema: {selected_topic}")
-                        return data
-            else:
-                print(f"   [IA Engine] ❌ Groq HTTP {res.status_code}: {res.text[:150]}")
-        except Exception as e:
-            print(f"   [IA Engine] ❌ Errore Groq: {e}")
+            print(f"   [IA Engine] ❌ Errore Gemini: {e}")
 
     return None
 
@@ -226,6 +221,4 @@ try:
 except Exception as e:
     print(f"   ❌ Errore N8: {e}")
 
-print("\n==================================================")
-print("🎉 COMPLETATO: TUTTE LE 8 NICCHIE B2B SONO ATTIVE!")
-print("==================================================")
+print("\n=================================================="
