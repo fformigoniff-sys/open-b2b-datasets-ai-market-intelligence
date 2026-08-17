@@ -28,11 +28,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: Esegui lo script master a 8 nicchie
+    - name: Esegui lo script di test isolato
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      run: python collector.py
+      run: python debug_ai.py
 
     - name: Salva e aggiorna automaticamente i dataset
       uses: stefanzweifel/git-auto-commit-action@v5
