@@ -2,6 +2,7 @@ import os
 import csv
 import json
 import random
+import re
 import requests
 import xml.etree.ElementTree as ET
 
@@ -10,12 +11,12 @@ print("🚀 AVVIO SCRIPT MASTER 8 NICCHIE B2B - OPTIMA AI")
 print("==================================================")
 
 # -------------------------------------------------------------------
-# FUNZIONE DUAL-AI NATIVA CON MODELLI ATTIVI E AGGIORNATI
+# FUNZIONE DUAL-AI DINAMICA ROBUSTA (GEMINI -> GROQ FALLBACK)
 # -------------------------------------------------------------------
 def generate_dynamic_b2b_finetuning():
     gemini_key = os.getenv('GEMINI_API_KEY')
     groq_key = os.getenv('GROQ_API_KEY')
-    
+
     topics = [
         "Cloud Architecture & Scalability",
         "Enterprise API Security & OAuth2",
@@ -25,28 +26,29 @@ def generate_dynamic_b2b_finetuning():
         "Microservices Communication & gRPC"
     ]
     selected_topic = random.choice(topics)
-    
-    prompt = f"""Genera 5 coppie domanda/risposta tecniche e approfondite per il fine-tuning di un LLM aziendale sul tema: '{selected_topic}'.
-Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura esatta:
+
+    prompt = f"""Genera 5 coppie domanda/risposta tecniche per fine-tuning di un LLM aziendale sul tema: '{selected_topic}'.
+Restituisci SOLO ed ESCLUSIVAMENTE un array JSON valido con questa struttura:
 [
-  {{"instruction": "Domanda o task tecnico...", "input": "", "output": "Risposta tecnica esaustiva..."}}
+  {{"instruction": "Domanda tecnica approfondita...", "input": "", "output": "Risposta tecnica esaustiva..."}}
 ]"""
 
-    # 1. Google Gemini Flash (Endpoint v1 / gemini-1.5-flash)
+    # 1. Google Gemini Flash
     if gemini_key:
         try:
-            url_gemini = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_key}"
             payload = {
                 "contents": [{"parts": [{"text": prompt}]}]
             }
             res = requests.post(url_gemini, json=payload, timeout=15)
             if res.status_code == 200:
                 raw_text = res.json()['candidates'][0]['content']['parts'][0]['text']
-                clean_json = raw_text.replace("```json", "").replace("```", "").strip()
-                data = json.loads(clean_json)
-                if isinstance(data, list) and len(data) > 0:
-                    print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Google Gemini sul tema: {selected_topic}")
-                    return data
+                match = re.search(r'\[.*\]', raw_text, re.DOTALL)
+                if match:
+                    data = json.loads(match.group(0))
+                    if isinstance(data, list) and len(data) > 0:
+                        print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Google Gemini sul tema: {selected_topic}")
+                        return data
             else:
                 print(f"   [IA Engine] ⚠️ Gemini HTTP {res.status_code}. Passo a Groq...")
         except Exception as e:
@@ -60,26 +62,26 @@ Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura esatta:
             payload = {
                 "model": "llama-3.1-8b-instant",
                 "messages": [
-                    {"role": "system", "content": "You are a specialized technical dataset generator. You only output pure raw JSON arrays without markdown."},
+                    {"role": "system", "content": "You are a technical data generator. You output only pure raw JSON arrays."},
                     {"role": "user", "content": prompt}
                 ],
                 "temperature": 0.4
             }
             res = requests.post(url_groq, headers=headers, json=payload, timeout=15)
             if res.status_code == 200:
-                content = res.json()['choices'][0]['message']['content']
-                clean_json = content.replace("```json", "").replace("```", "").strip()
-                data = json.loads(clean_json)
-                if isinstance(data, list) and len(data) > 0:
-                    print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3.1 sul tema: {selected_topic}")
-                    return data
+                raw_text = res.json()['choices'][0]['message']['content']
+                match = re.search(r'\[.*\]', raw_text, re.DOTALL)
+                if match:
+                    data = json.loads(match.group(0))
+                    if isinstance(data, list) and len(data) > 0:
+                        print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3.1 sul tema: {selected_topic}")
+                        return data
             else:
                 print(f"   [IA Engine] ❌ Groq HTTP {res.status_code}: {res.text[:200]}")
         except Exception as e:
             print(f"   [IA Engine] ❌ Errore Groq: {e}")
 
     return None
-
 
 # -------------------------------------------------------------------
 # NICCHIA 1: Remote Jobs & Salary Benchmarks
@@ -98,7 +100,6 @@ try:
         print("   ✅ Salvato 'remote_jobs_dataset.csv'")
 except Exception as e:
     print(f"   ❌ Errore N1: {e}")
-
 
 # -------------------------------------------------------------------
 # NICCHIA 2: Tech Stack & SaaS Infrastructure
@@ -119,7 +120,6 @@ try:
 except Exception as e:
     print(f"   ❌ Errore N2: {e}")
 
-
 # -------------------------------------------------------------------
 # NICCHIA 3: E-Commerce Price Intelligence
 # -------------------------------------------------------------------
@@ -137,7 +137,6 @@ try:
 except Exception as e:
     print(f"   ❌ Errore N3: {e}")
 
-
 # -------------------------------------------------------------------
 # NICCHIA 4: AI Fine-Tuning JSONL Generator (DINAMICO VIA IA)
 # -------------------------------------------------------------------
@@ -154,7 +153,6 @@ if ai_records:
 else:
     print("   ⚠️ Nessuna risposta valida ricevuta dai motori IA.")
 
-
 # -------------------------------------------------------------------
 # NICCHIA 5: Appalti Pubblici & Bandi B2B (Public Tenders)
 # -------------------------------------------------------------------
@@ -169,7 +167,6 @@ try:
     print("   ✅ Salvato 'public_tenders_dataset.csv'")
 except Exception as e:
     print(f"   ❌ Errore N5: {e}")
-
 
 # -------------------------------------------------------------------
 # NICCHIA 6: Fintech & Crypto Micro-Data (CoinGecko API)
@@ -189,7 +186,6 @@ try:
 except Exception as e:
     print(f"   ❌ Errore N6: {e}")
 
-
 # -------------------------------------------------------------------
 # NICCHIA 7: Paper Scientifici AI (ArXiv API)
 # -------------------------------------------------------------------
@@ -200,19 +196,18 @@ try:
     if res.status_code == 200:
         root = ET.fromstring(res.content)
         namespace = {'atom': 'http://www.w3.org/2005/Atom'}
-        
+
         with open('arxiv_ai_papers.jsonl', 'w', encoding='utf-8') as f:
             for entry in root.findall('atom:entry', namespace):
                 title = entry.find('atom:title', namespace).text.strip().replace('\n', ' ')
                 summary = entry.find('atom:summary', namespace).text.strip().replace('\n', ' ')
                 link = entry.find('atom:id', namespace).text.strip()
-                
+
                 row = {"title": title, "summary": summary[:300] + "...", "link": link, "category": "Computer Science - AI"}
                 f.write(json.dumps(row, ensure_ascii=False) + '\n')
         print("   ✅ Salvato 'arxiv_ai_papers.jsonl'")
 except Exception as e:
     print(f"   ❌ Errore N7: {e}")
-
 
 # -------------------------------------------------------------------
 # NICCHIA 8: Real Estate & Valutazioni Immobiliari (Dati OMI)
