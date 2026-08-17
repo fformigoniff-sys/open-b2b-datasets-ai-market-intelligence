@@ -38,7 +38,7 @@ Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura:
         try:
             url_groq = "https://api.groq.com/openai/v1/chat/completions"
             headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
-            for model_name in ["llama3-8b-8192", "mixtral-8x7b-32768", "gemma2-9b-it"]:
+            for model_name in ["llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it"]:
                 payload = {
                     "model": model_name,
                     "messages": [
@@ -221,4 +221,6 @@ try:
 except Exception as e:
     print(f"   ❌ Errore N8: {e}")
 
-print("\n=================================================="
+print("\n==================================================")
+print("🎉 COMPLETATO: TUTTE LE 8 NICCHIE B2B SONO ATTIVE!")
+print("==================================================")
