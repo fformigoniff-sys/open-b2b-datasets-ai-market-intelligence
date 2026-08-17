@@ -1,0 +1,7 @@
+Dominio,Status,Piattaforma,Server_Header
+shopify.com,301,Shopify,cloudflare
+woocommerce.com,200,Woocommerce,nginx
+stripe.com,200,Stripe,nginx
+wordpress.org,200,Wordpress,nginx
+webflow.com,200,Webflow,Hidden
+squarespace.com,301,Squarespace,Squarespace
