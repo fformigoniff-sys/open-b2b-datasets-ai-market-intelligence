@@ -1,6 +1,7 @@
 import os
 import csv
 import json
+import random
 import requests
 import xml.etree.ElementTree as ET
 
@@ -9,34 +10,72 @@ print("🚀 AVVIO SCRIPT MASTER 8 NICCHIE B2B - OPTIMA AI")
 print("==================================================")
 
 # -------------------------------------------------------------------
-# FUNZIONE DUAL-AI FALLBACK (GEMINI -> GROQ) PER COSTO 0 €
+# FUNZIONE DUAL-AI NATIVA CON OUTPUT JSON STRUTTURATO AL 100%
 # -------------------------------------------------------------------
-def call_free_ai_with_fallback(prompt_text):
+def generate_dynamic_b2b_finetuning():
     gemini_key = os.getenv('GEMINI_API_KEY')
     groq_key = os.getenv('GROQ_API_KEY')
     
-    # 1. Google Gemini Flash
+    topics = [
+        "Cloud Architecture & Scalability",
+        "Enterprise API Security & OAuth2",
+        "FinTech Payment Gateways & Webhooks",
+        "B2B CRM Data Migration & Pipelines",
+        "Database Indexing & Query Optimization",
+        "Microservices Communication & gRPC"
+    ]
+    selected_topic = random.choice(topics)
+    
+    prompt = f"""Genera 5 coppie domanda/risposta tecniche e approfondite per il fine-tuning di un LLM aziendale sul tema: '{selected_topic}'.
+Restituisci ESCLUSIVAMENTE una lista JSON con questa struttura esatta:
+[
+  {{"instruction": "Domanda o task tecnico...", "input": "", "output": "Risposta tecnica esaustiva..."}}
+]"""
+
+    # 1. Google Gemini Flash con JSON nativo forzato
     if gemini_key:
         try:
             url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-            payload = {"contents": [{"parts": [{"text": prompt_text}]}]}
-            res = requests.post(url_gemini, json=payload, timeout=10)
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "response_mime_type": "application/json",
+                    "temperature": 0.7
+                }
+            }
+            res = requests.post(url_gemini, json=payload, timeout=15)
             if res.status_code == 200:
-                print("   [IA Engine] ✅ Risposta ottenuta da Google Gemini Flash!")
-                return res.json()['candidates'][0]['content']['parts'][0]['text']
+                raw_text = res.json()['candidates'][0]['content']['parts'][0]['text']
+                data = json.loads(raw_text)
+                if isinstance(data, list) and len(data) > 0:
+                    print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Google Gemini sul tema: {selected_topic}")
+                    return data
         except Exception as e:
-            print(f"   [IA Engine] ⚠️ Errore Gemini ({e}). Provo Groq...")
+            print(f"   [IA Engine] ⚠️ Gemini fallito ({e}). Passo al motore di riserva Groq...")
 
-    # 2. Groq Llama 3 (Fallback)
+    # 2. Groq Llama 3 (Fallback) con formato JSON
     if groq_key:
         try:
             url_groq = "https://api.groq.com/openai/v1/chat/completions"
             headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
-            payload = {"model": "llama3-8b-8192", "messages": [{"role": "user", "content": prompt_text}], "temperature": 0.3}
-            res = requests.post(url_groq, headers=headers, json=payload, timeout=10)
+            payload = {
+                "model": "llama3-8b-8192",
+                "messages": [
+                    {"role": "system", "content": "You are a specialized technical data generator. You only output pure raw JSON arrays."},
+                    {"role": "user", "content": prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.7
+            }
+            res = requests.post(url_groq, headers=headers, json=payload, timeout=15)
             if res.status_code == 200:
-                print("   [IA Engine] ✅ Risposta ottenuta da Groq (Llama 3 Fallback)!")
-                return res.json()['choices'][0]['message']['content']
+                content = res.json()['choices'][0]['message']['content']
+                parsed = json.loads(content)
+                # Estrae l'array se annidato in un oggetto
+                data = parsed if isinstance(parsed, list) else list(parsed.values())[0]
+                if isinstance(data, list):
+                    print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3 sul tema: {selected_topic}")
+                    return data
         except Exception as e:
             print(f"   [IA Engine] ❌ Errore Groq: {e}")
 
@@ -101,23 +140,20 @@ except Exception as e:
 
 
 # -------------------------------------------------------------------
-# NICCHIA 4: AI Fine-Tuning JSONL Generator
+# NICCHIA 4: AI Fine-Tuning JSONL Generator (100% DINAMICO VIA IA)
 # -------------------------------------------------------------------
 print("\n[4/8] Processing Nicchia 4: AI Fine-Tuning JSONL Dataset...")
-prompt_finetuning = """Genera 3 coppie JSON per fine-tuning IA B2B in questa forma:
-[{"instruction": "Domanda...", "input": "", "output": "Risposta..."}]
-Restituisci SOLO il codice JSON puro."""
-ai_res = call_free_ai_with_fallback(prompt_finetuning)
-if ai_res:
+ai_records = generate_dynamic_b2b_finetuning()
+if ai_records:
     try:
-        clean_json = ai_res.replace("```json", "").replace("```", "").strip()
-        data_json = json.loads(clean_json)
         with open('ai_finetuning_dataset.jsonl', 'w', encoding='utf-8') as f:
-            for row in data_json:
+            for row in ai_records:
                 f.write(json.dumps(row, ensure_ascii=False) + '\n')
-        print("   ✅ Salvato 'ai_finetuning_dataset.jsonl'")
+        print("   ✅ Salvato 'ai_finetuning_dataset.jsonl' (Generato dinamicamente dall'IA)")
     except Exception as e:
-        print(f"   ⚠️ Errore formattazione JSONL: {e}")
+        print(f"   ❌ Errore scrittura JSONL: {e}")
+else:
+    print("   ⚠️ Nessuna risposta valida ricevuta dai motori IA.")
 
 
 # -------------------------------------------------------------------
