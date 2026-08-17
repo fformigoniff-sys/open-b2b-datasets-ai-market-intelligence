@@ -10,7 +10,7 @@ print("🚀 AVVIO SCRIPT MASTER 8 NICCHIE B2B - OPTIMA AI")
 print("==================================================")
 
 # -------------------------------------------------------------------
-# FUNZIONE DUAL-AI NATIVA CON OUTPUT JSON STRUTTURATO AL 100%
+# FUNZIONE DUAL-AI NATIVA CON MODELLI ATTIVI E AGGIORNATI
 # -------------------------------------------------------------------
 def generate_dynamic_b2b_finetuning():
     gemini_key = os.getenv('GEMINI_API_KEY')
@@ -27,55 +27,54 @@ def generate_dynamic_b2b_finetuning():
     selected_topic = random.choice(topics)
     
     prompt = f"""Genera 5 coppie domanda/risposta tecniche e approfondite per il fine-tuning di un LLM aziendale sul tema: '{selected_topic}'.
-Restituisci ESCLUSIVAMENTE una lista JSON con questa struttura esatta:
+Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura esatta:
 [
   {{"instruction": "Domanda o task tecnico...", "input": "", "output": "Risposta tecnica esaustiva..."}}
 ]"""
 
-    # 1. Google Gemini Flash con JSON nativo forzato
+    # 1. Google Gemini Flash (Endpoint v1 / gemini-1.5-flash)
     if gemini_key:
         try:
-            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            url_gemini = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={gemini_key}"
             payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {
-                    "response_mime_type": "application/json",
-                    "temperature": 0.7
-                }
+                "contents": [{"parts": [{"text": prompt}]}]
             }
             res = requests.post(url_gemini, json=payload, timeout=15)
             if res.status_code == 200:
                 raw_text = res.json()['candidates'][0]['content']['parts'][0]['text']
-                data = json.loads(raw_text)
+                clean_json = raw_text.replace("```json", "").replace("```", "").strip()
+                data = json.loads(clean_json)
                 if isinstance(data, list) and len(data) > 0:
                     print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Google Gemini sul tema: {selected_topic}")
                     return data
+            else:
+                print(f"   [IA Engine] ⚠️ Gemini HTTP {res.status_code}. Passo a Groq...")
         except Exception as e:
-            print(f"   [IA Engine] ⚠️ Gemini fallito ({e}). Passo al motore di riserva Groq...")
+            print(f"   [IA Engine] ⚠️ Errore Gemini ({e}). Passo a Groq...")
 
-    # 2. Groq Llama 3 (Fallback) con formato JSON
+    # 2. Groq (Modello Attivo: llama-3.1-8b-instant)
     if groq_key:
         try:
             url_groq = "https://api.groq.com/openai/v1/chat/completions"
             headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
             payload = {
-                "model": "llama3-8b-8192",
+                "model": "llama-3.1-8b-instant",
                 "messages": [
-                    {"role": "system", "content": "You are a specialized technical data generator. You only output pure raw JSON arrays."},
+                    {"role": "system", "content": "You are a specialized technical dataset generator. You only output pure raw JSON arrays without markdown."},
                     {"role": "user", "content": prompt}
                 ],
-                "response_format": {"type": "json_object"},
-                "temperature": 0.7
+                "temperature": 0.4
             }
             res = requests.post(url_groq, headers=headers, json=payload, timeout=15)
             if res.status_code == 200:
                 content = res.json()['choices'][0]['message']['content']
-                parsed = json.loads(content)
-                # Estrae l'array se annidato in un oggetto
-                data = parsed if isinstance(parsed, list) else list(parsed.values())[0]
-                if isinstance(data, list):
-                    print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3 sul tema: {selected_topic}")
+                clean_json = content.replace("```json", "").replace("```", "").strip()
+                data = json.loads(clean_json)
+                if isinstance(data, list) and len(data) > 0:
+                    print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3.1 sul tema: {selected_topic}")
                     return data
+            else:
+                print(f"   [IA Engine] ❌ Groq HTTP {res.status_code}: {res.text[:200]}")
         except Exception as e:
             print(f"   [IA Engine] ❌ Errore Groq: {e}")
 
@@ -140,7 +139,7 @@ except Exception as e:
 
 
 # -------------------------------------------------------------------
-# NICCHIA 4: AI Fine-Tuning JSONL Generator (100% DINAMICO VIA IA)
+# NICCHIA 4: AI Fine-Tuning JSONL Generator (DINAMICO VIA IA)
 # -------------------------------------------------------------------
 print("\n[4/8] Processing Nicchia 4: AI Fine-Tuning JSONL Dataset...")
 ai_records = generate_dynamic_b2b_finetuning()
