@@ -36,6 +36,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git pull origin main --rebase
         git add -A
         git commit -m "Auto-update all 8 B2B datasets [skip ci]" || exit 0
         git push origin main
