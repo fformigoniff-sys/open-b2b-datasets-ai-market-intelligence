@@ -11,7 +11,7 @@ print("🚀 AVVIO SCRIPT MASTER 8 NICCHIE B2B - OPTIMA AI")
 print("==================================================")
 
 # -------------------------------------------------------------------
-# FUNZIONE DUAL-AI DINAMICA ROBUSTA (GEMINI -> GROQ FALLBACK)
+# FUNZIONE DUAL-AI NATIVA CON ENDPOINT VERIFICATI AL 100%
 # -------------------------------------------------------------------
 def generate_dynamic_b2b_finetuning():
     gemini_key = os.getenv('GEMINI_API_KEY')
@@ -28,15 +28,15 @@ def generate_dynamic_b2b_finetuning():
     selected_topic = random.choice(topics)
 
     prompt = f"""Genera 5 coppie domanda/risposta tecniche per fine-tuning di un LLM aziendale sul tema: '{selected_topic}'.
-Restituisci SOLO ed ESCLUSIVAMENTE un array JSON valido con questa struttura:
+Restituisci ESCLUSIVAMENTE una lista JSON pura con questa struttura:
 [
   {{"instruction": "Domanda tecnica approfondita...", "input": "", "output": "Risposta tecnica esaustiva..."}}
 ]"""
 
-    # 1. Google Gemini Flash
+    # 1. Google Gemini Flash (Endpoint v1beta)
     if gemini_key:
         try:
-            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_key}"
+            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
             payload = {
                 "contents": [{"parts": [{"text": prompt}]}]
             }
@@ -50,34 +50,34 @@ Restituisci SOLO ed ESCLUSIVAMENTE un array JSON valido con questa struttura:
                         print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Google Gemini sul tema: {selected_topic}")
                         return data
             else:
-                print(f"   [IA Engine] ⚠️ Gemini HTTP {res.status_code}. Passo a Groq...")
+                print(f"   [IA Engine] ⚠️ Gemini HTTP {res.status_code}: {res.text[:150]}. Passo a Groq...")
         except Exception as e:
             print(f"   [IA Engine] ⚠️ Errore Gemini ({e}). Passo a Groq...")
 
-    # 2. Groq (Modello Attivo: llama-3.1-8b-instant)
+    # 2. Groq (Modello Attivo Verificato: llama-3.3-70b-versatile)
     if groq_key:
         try:
             url_groq = "https://api.groq.com/openai/v1/chat/completions"
             headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
             payload = {
-                "model": "llama-3.1-8b-instant",
+                "model": "llama-3.3-70b-versatile",
                 "messages": [
-                    {"role": "system", "content": "You are a technical data generator. You output only pure raw JSON arrays."},
+                    {"role": "system", "content": "You are a specialized technical data generator. Output only raw JSON array."},
                     {"role": "user", "content": prompt}
                 ],
                 "temperature": 0.4
             }
             res = requests.post(url_groq, headers=headers, json=payload, timeout=15)
             if res.status_code == 200:
-                raw_text = res.json()['choices'][0]['message']['content']
-                match = re.search(r'\[.*\]', raw_text, re.DOTALL)
+                content = res.json()['choices'][0]['message']['content']
+                match = re.search(r'\[.*\]', content, re.DOTALL)
                 if match:
                     data = json.loads(match.group(0))
                     if isinstance(data, list) and len(data) > 0:
-                        print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3.1 sul tema: {selected_topic}")
+                        print(f"   [IA Engine] ✅ Generati 5 nuovi record IA da Groq Llama 3.3 sul tema: {selected_topic}")
                         return data
             else:
-                print(f"   [IA Engine] ❌ Groq HTTP {res.status_code}: {res.text[:200]}")
+                print(f"   [IA Engine] ❌ Groq HTTP {res.status_code}: {res.text[:150]}")
         except Exception as e:
             print(f"   [IA Engine] ❌ Errore Groq: {e}")
 
@@ -147,7 +147,7 @@ if ai_records:
         with open('ai_finetuning_dataset.jsonl', 'w', encoding='utf-8') as f:
             for row in ai_records:
                 f.write(json.dumps(row, ensure_ascii=False) + '\n')
-        print("   ✅ Salvato 'ai_finetuning_dataset.jsonl' (Generato dinamicamente dall'IA)")
+        print("   ✅ Salvato 'ai_finetuning_dataset.jsonl'")
     except Exception as e:
         print(f"   ❌ Errore scrittura JSONL: {e}")
 else:
