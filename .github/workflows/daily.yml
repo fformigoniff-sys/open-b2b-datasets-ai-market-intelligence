@@ -15,6 +15,8 @@ jobs:
     steps:
     - name: Scarica il codice dal repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Configura Python
       uses: actions/setup-python@v5
@@ -32,11 +34,8 @@ jobs:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       run: python collector.py
 
-    - name: Salva e aggiorna TUTTI i 8 dataset su GitHub
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git pull origin main --rebase
-        git add -A
-        git commit -m "Auto-update all 8 B2B datasets [skip ci]" || exit 0
-        git push origin main
+    - name: Salva e aggiorna automaticamente i dataset
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-update all 8 B2B datasets [skip ci]"
+        file_pattern: "*.csv *.jsonl"
