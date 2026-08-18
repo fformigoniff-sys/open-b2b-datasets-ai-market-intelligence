@@ -1,6 +1,17 @@
-Città,Zona_OMI,Prezzo_Medio_Vendita_MQ,Prezzo_Medio_Affitto_MQ,Rendimento_Stimato_%
-Milano,Centro Storico,7.800 €,28 €,4.3%
-Milano,Navigli / Porta Ticinese,5.200 €,22 €,5.1%
-Roma,Centro Storico / Trastevere,6.100 €,24 €,4.7%
-Torino,Centro / Crocetta,2.900 €,12 €,5.8%
-Bologna,Centro / Università,3.800 €,16 €,5.5%
+Paese,Anno,Tasso_Inflazione_Costi_%,Indicatore_Macroeconomico
+Germany,2025,2.17,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2024,2.26,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2023,5.95,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2022,6.87,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2021,3.07,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2020,0.14,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2019,1.45,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2018,1.73,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2017,1.51,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2016,0.49,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2015,0.51,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2014,0.91,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2013,1.5,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2012,2.01,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2011,2.08,Indice Prezzi al Consumo & Costi Immobiliari
+Germany,2010,1.1,Indice Prezzi al Consumo & Costi Immobiliari

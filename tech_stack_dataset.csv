@@ -1,7 +1,16 @@
-Dominio,Status,Piattaforma,Server_Header
-shopify.com,301,Shopify,cloudflare
-woocommerce.com,200,Woocommerce,nginx
-stripe.com,200,Stripe,nginx
-wordpress.org,200,Wordpress,nginx
-webflow.com,200,Webflow,Hidden
-squarespace.com,301,Squarespace,Squarespace
+Dominio,Status_HTTP,Server_Header,Content_Type,Tempo_Risposta_ms
+shopify.com,301,cloudflare,text/html; charset=UTF-8,37
+stripe.com,200,nginx,text/html; charset=utf-8,238
+woocommerce.com,200,nginx,text/html; charset=UTF-8,30
+notion.so,301,cloudflare,text/html; charset=UTF-8,121
+hubspot.com,301,cloudflare,text/html; charset=UTF-8,45
+klaviyo.com,301,AmazonS3,text/html,57
+canva.com,301,CloudFront,text/html,59
+linear.app,200,cloudflare,text/html; charset=utf-8,65
+figma.com,301,Cloudflare/Protected,text/html,238
+intercom.com,301,AmazonS3,text/html,112
+webflow.com,200,Cloudflare/Protected,text/html; charset=utf-8,95
+squarespace.com,301,Squarespace,text/html,54
+airtable.com,301,Tengine,text/plain; charset=utf-8,129
+miro.com,200,Cloudflare/Protected,text/html,220
+slack.com,200,Apache,text/html; charset=utf-8,190

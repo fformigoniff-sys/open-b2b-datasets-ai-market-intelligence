@@ -1,4 +1,26 @@
-ID_Bando,Ente_Emittente,Oggetto_Gara,Importo_Stimato_EUR,Scadenza,Settore
-TED-2024-001,Comune di Milano,Fornitura Software Cloud Analytics,45.000,2024-12-15,IT/Cloud
-TED-2024-002,Regione Lazio,Servizi di Manutenzione CyberSecurity,120.000,2024-12-20,Cybersecurity
-TED-2024-003,Università di Bologna,Sviluppo Portale Open Data,30.000,2025-01-10,Web/Data
+Numero_Avviso_Gazzetta_UE,Paese_Ente_Appaltante,Link_Ufficiale_Bando_TED
+9-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/9-2024
+14-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/14-2024
+27-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/27-2024
+37-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/37-2024
+40-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/40-2024
+71-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/71-2024
+73-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/73-2024
+78-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/78-2024
+81-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/81-2024
+88-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/88-2024
+119-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/119-2024
+145-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/145-2024
+149-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/149-2024
+151-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/151-2024
+158-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/158-2024
+161-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/161-2024
+171-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/171-2024
+177-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/177-2024
+188-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/188-2024
+205-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/205-2024
+219-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/219-2024
+227-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/227-2024
+232-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/232-2024
+242-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/242-2024
+247-2024,Italia (UE),https://ted.europa.eu/it/notice/-/detail/247-2024
