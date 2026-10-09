@@ -1,16 +1,16 @@
 Dominio,Status_HTTP,Server_Header,Content_Type,Tempo_Risposta_ms
-shopify.com,301,cloudflare,text/html; charset=UTF-8,58
-stripe.com,200,nginx,text/html; charset=utf-8,150
-woocommerce.com,200,nginx,text/html; charset=UTF-8,119
-notion.so,301,cloudflare,text/html; charset=UTF-8,52
-hubspot.com,301,cloudflare,text/html; charset=UTF-8,54
-klaviyo.com,301,AmazonS3,text/html,84
-canva.com,301,CloudFront,text/html,83
-linear.app,200,cloudflare,text/html; charset=utf-8,149
-figma.com,301,Cloudflare/Protected,text/html,94
-intercom.com,301,AmazonS3,text/html,123
-webflow.com,200,Cloudflare/Protected,text/html; charset=utf-8,379
-squarespace.com,301,Squarespace,text/html,186
-airtable.com,301,Tengine,text/plain; charset=utf-8,158
-miro.com,200,Cloudflare/Protected,text/html,296
-slack.com,200,Apache,text/html; charset=utf-8,241
+shopify.com,301,cloudflare,text/html; charset=UTF-8,74
+stripe.com,200,nginx,text/html; charset=utf-8,285
+woocommerce.com,200,nginx,text/html; charset=UTF-8,183
+notion.so,301,cloudflare,text/html; charset=UTF-8,89
+hubspot.com,301,cloudflare,text/html; charset=UTF-8,72
+klaviyo.com,301,AmazonS3,text/html,66
+canva.com,301,CloudFront,text/html,92
+linear.app,200,cloudflare,text/html; charset=utf-8,140
+figma.com,301,Cloudflare/Protected,text/html,280
+intercom.com,301,AmazonS3,text/html,122
+webflow.com,200,Cloudflare/Protected,text/html; charset=utf-8,214
+squarespace.com,301,Squarespace,text/html,158
+airtable.com,301,Tengine,text/plain; charset=utf-8,117
+miro.com,200,Cloudflare/Protected,text/html,416
+slack.com,200,Apache,text/html; charset=utf-8,187
